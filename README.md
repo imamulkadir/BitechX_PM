@@ -2,7 +2,7 @@
 
 BitechX_PM is a modern product management dashboard built with Next.js, Redux Toolkit, and Tailwind CSS. It offers a clean and responsive interface for managing products, categories, and user authentication, tailored for e-commerce and internal tools.
 
-![BitechX_PM Dashboard](https://github.com/imamulkadir/BitechX_PM/raw/main/public/preview.png)
+<!-- ![BitechX_PM Dashboard](https://github.com/imamulkadir/BitechX_PM/raw/main/public/preview.png) -->
 
 ## 🚀 Features
 
