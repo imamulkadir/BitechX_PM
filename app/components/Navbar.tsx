@@ -52,7 +52,12 @@ const Navbar = () => {
             <a onClick={() => router.push("/categories")}>Categories</a>
           </li>
           <li>
-            <a onClick={handleLogout}>Logout</a>
+            <a
+              className="text-[var(--red)] font-semibold"
+              onClick={handleLogout}
+            >
+              Logout
+            </a>
           </li>
         </ul>
       </div>
@@ -88,7 +93,9 @@ const Navbar = () => {
               <a onClick={() => router.push("/categories")}>Categories</a>
             </li>
             <li>
-              <a onClick={handleLogout}>Logout</a>
+              <a className="text-[var(--red)] font-bold" onClick={handleLogout}>
+                Logout
+              </a>
             </li>
           </ul>
         </div>
