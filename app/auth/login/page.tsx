@@ -4,6 +4,7 @@ import { login } from "@/app/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Bounce, toast } from "react-toastify";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -25,9 +26,36 @@ const LoginPage = () => {
       return;
     }
     console.log(email);
-    dispatch(login({ email: email }));
-
-    router.push("/home");
+    dispatch(login({ email: email })).then((data) => {
+      console.log(data);
+      if (data.error) {
+        toast.error("Invalid email.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+      if (data.payload.token) {
+        router.push("/home");
+        toast.success("Authenticated!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+    });
   };
 
   return (

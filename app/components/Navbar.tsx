@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
+import { Bounce, toast } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,17 @@ const Navbar = () => {
               onClick={() => {
                 dispatch(logout());
                 router.push("/");
+                toast.info("Logged out!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: false,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "dark",
+                  transition: Bounce,
+                });
               }}
             >
               Logout
