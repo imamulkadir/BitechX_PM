@@ -50,9 +50,17 @@ const ProductCard = ({ product }) => {
 
       {/* Body */}
       <div className="card-body bg-[var(--primary)] p-3 sm:p-4 md:p-5 sm:space-y-2">
-        <h2 className="text-lg sm:text-xl font-semibold tracking-wide line-clamp-1">
-          {product.name}
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="text-lg sm:text-xl font-semibold tracking-wide line-clamp-1">
+            {product.name}
+          </h2>
+          <div
+            className="badge px-2 text-white"
+            style={{ backgroundColor: "#4E6E5D" }}
+          >
+            {product.category.name}
+          </div>
+        </div>
         <p className="text-xs sm:text-sm text-[var(--text-white)]/80 line-clamp-2 leading-relaxed">
           {product.description}
         </p>
