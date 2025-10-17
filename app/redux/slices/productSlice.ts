@@ -47,7 +47,7 @@ export const fetchSingleProduct = createAsyncThunk(
   "/products/details",
   async (slug) => {
     try {
-      console.log(slug);
+      // console.log(slug);
       const response = await axiosInstance.get(`/products/${slug}`);
       // console.log(response.data);
       return response.data;
@@ -61,9 +61,9 @@ export const deleteSingleProduct = createAsyncThunk(
   "/products/delete",
   async (id) => {
     try {
-      console.log(id);
+      // console.log(id);
       const response = await axiosInstance.delete(`/products/${id}`);
-      console.log("from slice: ", response.data);
+      // console.log("from slice: ", response.data);
       return response.data;
     } catch (error) {
       throw error;

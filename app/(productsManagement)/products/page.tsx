@@ -59,8 +59,9 @@ const ProductsPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!searchedText) {
+    if (searchedText === "") {
       dispatch(fetchProducts());
+      return;
     }
     const delay = setTimeout(() => {
       dispatch(searchProducts(searchedText));
@@ -190,7 +191,7 @@ const ProductsPage = () => {
             Loading products...
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-2">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-2 mb-4">
             {paginatedProducts?.map((product: any, index: number) => (
               <ProductCard key={index} product={product} />
             ))}
@@ -200,9 +201,9 @@ const ProductsPage = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
+        <div className="flex flex-wrap justify-center items-center gap-1 mt-6">
           <button
-            className="px-3 py-1 border rounded-md hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -212,7 +213,7 @@ const ProductsPage = () => {
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
-              className={`px-3 py-1 border rounded-md ${
+              className={`px-2 py-1 border rounded-md text-xs sm:text-sm ${
                 page === currentPage
                   ? "bg-[var(--brown)] text-white"
                   : "hover:bg-gray-200"
@@ -224,7 +225,7 @@ const ProductsPage = () => {
           ))}
 
           <button
-            className="px-3 py-1 border rounded-md hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >

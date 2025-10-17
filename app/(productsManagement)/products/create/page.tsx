@@ -99,7 +99,7 @@ const CreatePage = () => {
       }
     });
 
-    console.log("Payload:", payload);
+    // console.log("Payload:", payload);
 
     // TODO: Replace with API POST request
     //

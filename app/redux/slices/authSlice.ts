@@ -5,10 +5,10 @@ import { jwtDecode } from "jwt-decode";
 export const login = createAsyncThunk(
   "auth/login",
   async (values: { email: string }) => {
-    console.log(values);
+    // console.log(values);
     try {
       const response = await axiosInstance.post("/auth", values);
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;
