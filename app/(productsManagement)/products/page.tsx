@@ -1,29 +1,46 @@
 "use client";
 import ProductCard from "@/app/components/ProductCard";
 import { fetchProducts, searchProducts } from "@/app/redux/slices/productSlice";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaPlus } from "react-icons/fa6";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import axiosInstance from "@/app/lib/axiosInstance";
+import { fetchCategories } from "@/app/redux/slices/categorySlice";
+import { useRouter } from "next/navigation";
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { products, loading } = useSelector((state: any) => state.product);
   const [searchedText, setSearchedText] = useState("");
 
-  const [value, setValue] = useState("all");
+  const [category, setCategory] = useState("all");
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [filteredProducts, setFilteredProducts] = useState(products);
 
-  const options = [
-    { value: "all", label: "All Categories" },
-    { value: "electronics", label: "Electronics" },
-    { value: "fashion", label: "Fashion" },
-    { value: "home", label: "Home" },
-  ];
+  const { categories, loading: categoryLoading } = useSelector(
+    (state) => state.categories
+  );
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const options = useMemo(() => {
+    if (!categories || categories.length === 0) {
+      return [{ value: "all", label: "All Categories" }];
+    }
+
+    const dynamicOptions = categories.map((cat) => ({
+      value: cat.slug || cat.name.toLowerCase(),
+      label: cat.name,
+    }));
+
+    return [{ value: "all", label: "All Categories" }, ...dynamicOptions];
+  }, [categories]);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -51,11 +68,18 @@ const ProductsPage = () => {
     return () => clearTimeout(delay);
   }, [dispatch, searchedText]);
 
-  // Filter products by category
-  const filteredProducts =
-    value === "all"
-      ? products
-      : products.filter((p: any) => p.category === value);
+  useEffect(() => {
+    if (!products) return;
+
+    if (category === "all") {
+      setFilteredProducts(products);
+    } else {
+      const tempCategory = products.filter(
+        (p: any) => p.category.name.toLowerCase() === category.toLowerCase()
+      );
+      setFilteredProducts(tempCategory);
+    }
+  }, [category, products]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredProducts?.length / itemsPerPage);
@@ -70,19 +94,6 @@ const ProductsPage = () => {
     setCurrentPage(page);
   };
 
-  // console.log(loading);
-
-  // const searcProducts = async () => {
-  //   const data = axiosInstance.get(
-  //     "https://api.bitechx.com/products/search?searchedText=test+pro"
-  //   );
-  //   console.log(data);
-  // };
-
-  // searcProducts();
-
-  console.log(searchedText);
-
   return (
     <div
       className="flex flex-col mt-6 max-w-[1440px] mx-auto"
@@ -96,7 +107,12 @@ const ProductsPage = () => {
             <p className="text-gray-500">Manage your product catalog</p>
           </div>
           <div>
-            <button className="flex justify-between items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--text-white)] rounded-md hover:bg-[var(--green)] hover:text-white transition-all">
+            <button
+              onClick={() => {
+                router.push("/products/create");
+              }}
+              className="flex justify-between items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--text-white)] rounded-md hover:bg-[var(--green)] hover:text-white transition-all"
+            >
               <FaPlus />
               Add Product
             </button>
@@ -136,7 +152,7 @@ const ProductsPage = () => {
               className="text-sm w-full h-10 border border-gray-300 rounded-md px-3 text-left flex items-center justify-between transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--brown)]"
               onClick={() => setOpen(!open)}
             >
-              {options.find((o) => o.value === value)?.label}
+              {options.find((o) => o.value === category)?.label}
               <span className="ml-2">
                 <MdKeyboardArrowDown size={20} />
               </span>
@@ -148,12 +164,12 @@ const ProductsPage = () => {
                   <li
                     key={option.value}
                     onClick={() => {
-                      setValue(option.value);
+                      setCategory(option.value);
                       setCurrentPage(1); // reset page on filter change
                       setOpen(false);
                     }}
                     className={`px-3 py-2 cursor-pointer text-sm rounded-md ${
-                      value === option.value
+                      category === option.value
                         ? "bg-[var(--brown)] text-white"
                         : "hover:bg-[var(--brown)] hover:text-white transition-all duration-200"
                     }`}
@@ -176,13 +192,7 @@ const ProductsPage = () => {
         ) : (
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-2">
             {paginatedProducts?.map((product: any, index: number) => (
-              <ProductCard
-                key={index}
-                image={product?.images?.[0]}
-                name={product.name}
-                description={product.description}
-                price={product.price}
-              />
+              <ProductCard key={index} product={product} />
             ))}
           </div>
         )}

@@ -34,6 +34,9 @@ const Navbar = () => {
             </a>
           </li>
           <li>
+            <a onClick={() => router.push("/categories")}>Categories</a>
+          </li>
+          <li>
             <a
               onClick={() => {
                 dispatch(logout());

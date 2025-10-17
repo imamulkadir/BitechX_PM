@@ -25,9 +25,9 @@ const LoginPage = () => {
       setError("Invalid email format!");
       return;
     }
-    console.log(email);
+    // console.log(email);
     dispatch(login({ email: email })).then((data) => {
-      console.log(data);
+      // console.log(data);
       if (data.error) {
         toast.error("Invalid email.", {
           position: "top-right",
