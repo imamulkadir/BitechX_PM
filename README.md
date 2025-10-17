@@ -60,6 +60,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ## 📂 Folder Structure
 
+```
 BitechX_PM/
 ├── app/ # Next.js App Router pages & layouts
 │ ├── products/ # Product-related pages (list, create, edit, details)
@@ -94,6 +95,7 @@ BitechX_PM/
 ├── yarn.lock
 ├── next.config.js
 └── README.md
+```
 
 ## 🧪 Testing
 
