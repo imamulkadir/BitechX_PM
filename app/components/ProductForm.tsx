@@ -65,18 +65,43 @@ const ProductForm = ({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    type FormField = keyof typeof formData;
+    const requiredFields: FormField[] = [
+      "name",
+      "description",
+      "price",
+      "category",
+    ];
+
     const newErrors: Record<string, string> = {};
-    ["name", "description", "price", "category"].forEach((field) => {
-      const value = (formData as any)[field];
-      validateField(field, value);
-      if (!value || (field === "price" && parseFloat(value) <= 0)) {
-        newErrors[field] = `${
-          field[0].toUpperCase() + field.slice(1)
-        } is required.`;
+
+    requiredFields.forEach((field) => {
+      const value = formData[field];
+
+      if (typeof value !== "string") return; // <-- skip non-string fields
+
+      let message = "";
+      switch (field) {
+        case "name":
+          if (!value.trim()) message = "Product name is required.";
+          break;
+        case "description":
+          if (!value.trim()) message = "Description cannot be empty.";
+          break;
+        case "price":
+          if (!value || parseFloat(value) <= 0)
+            message = "Enter a valid price greater than 0.";
+          break;
+        case "category":
+          if (!value) message = "Please select a category.";
+          break;
       }
+
+      if (message) newErrors[field] = message;
     });
 
-    if (Object.values(newErrors).some((err) => err)) {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }

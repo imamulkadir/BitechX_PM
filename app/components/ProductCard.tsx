@@ -1,40 +1,58 @@
 "use client";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 // import Image from "next/image";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
-import { deleteSingleProduct } from "../redux/slices/productSlice";
+// import { FaEdit, FaTrashAlt } from "react-icons/fa";
+// import { useDispatch } from "react-redux";
+// import Swal from "sweetalert2";
+// import { deleteSingleProduct } from "../redux/slices/productSlice";
 import { useState } from "react";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-const ProductCard = ({ product }) => {
-  const router = useRouter();
-  const [openModal, setOpenModal] = useState(false); // boolean instead of slug
-  const dispatch = useDispatch();
-
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(deleteSingleProduct(id))
-          .unwrap()
-          .then(() => {
-            Swal.fire("Deleted!", "Your product has been deleted.", "success");
-          })
-          .catch(() => {
-            Swal.fire("Error!", "Failed to delete product.", "error");
-          });
-      }
-    });
+type Product = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  price: string | number;
+  images?: string[];
+  category: {
+    id: string;
+    name: string;
   };
+};
+
+type ProductCardProps = {
+  product: Product;
+};
+
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  // const router = useRouter();
+  const [openModal, setOpenModal] = useState(false); // boolean instead of slug
+  // const dispatch = useDispatch();
+
+  // const handleDelete = (id) => {
+  //   Swal.fire({
+  //     title: "Are you sure?",
+  //     text: "You won't be able to revert this!",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Yes, delete it!",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       // @ts-expect-error hmm
+  //       dispatch(deleteSingleProduct(id))
+  //         .unwrap()
+  //         .then(() => {
+  //           Swal.fire("Deleted!", "Your product has been deleted.", "success");
+  //         })
+  //         .catch(() => {
+  //           Swal.fire("Error!", "Failed to delete product.", "error");
+  //         });
+  //     }
+  //   });
+  // };
 
   return (
     <div className="card bg-[var(--text-white)] w-full shadow-sm text-[var(--text-white)] transition-all rounded-md overflow-hidden">

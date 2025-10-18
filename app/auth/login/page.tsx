@@ -2,34 +2,64 @@
 
 import { login } from "@/app/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Slide, toast } from "react-toastify";
+import type { AppDispatch } from "@/app/redux/store";
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
-  const [email, setEmail] = useState();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [error, setError] = useState(null);
+
+  const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Navigate client-side only when login succeeds
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/home");
+    }
+  }, [isLoggedIn, router]);
 
   const handleLogin = () => {
     // Reset previous error
-    setError("");
+    setError(null);
 
-    if (!email) {
+    if (!email.trim()) {
       setError("Email cannot be empty!");
       return;
     }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Invalid email format!");
       return;
     }
-    // console.log(email);
-    dispatch(login({ email: email })).then((data) => {
-      // console.log(data);
-      if (data.error) {
-        toast.error("Invalid email.", {
+
+    dispatch(login({ email }))
+      .unwrap()
+      .then((payload) => {
+        if (payload?.token) {
+          toast.success("Authenticated!", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Slide,
+          });
+          setIsLoggedIn(true); // trigger client-side navigation
+        }
+      })
+      .catch((err: unknown) => {
+        let message = "Invalid email.";
+        if (err instanceof Error) message = err.message;
+
+        toast.error(message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -40,22 +70,7 @@ const LoginPage = () => {
           theme: "dark",
           transition: Slide,
         });
-      }
-      if (data.payload.token) {
-        router.push("/home");
-        toast.success("Authenticated!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Slide,
-        });
-      }
-    });
+      });
   };
 
   return (
@@ -74,14 +89,12 @@ const LoginPage = () => {
         {/* Form */}
         <div className="space-y-4">
           <div className="flex flex-col">
-            {/* <label className="text-[var(--text-white)] font-medium mb-1">
-              Email
-            </label> */}
             <input
               type="email"
               placeholder="Enter your email"
               className="input w-full bg-[var(--primary)] border border-gray-600 rounded-lg text-[var(--text-white)] placeholder:text-[var(--text-white)]/50 focus:border-[var(--green)] focus:ring-1 focus:ring-[var(--green)] focus:outline-none transition-all"
-              onChange={(e: any) => setEmail(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             {error && <p className="text-xs text-[var(--red)] mt-1">{error}</p>}
           </div>
@@ -93,14 +106,6 @@ const LoginPage = () => {
             Login
           </button>
         </div>
-
-        {/* Footer */}
-        {/* <p className="text-center text-[var(--text-white)]/70 text-sm">
-          Don’t have an account?{" "}
-          <span className="text-[var(--green)] font-semibold cursor-pointer">
-            Sign up
-          </span>
-        </p> */}
       </div>
     </div>
   );

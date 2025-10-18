@@ -1,63 +1,88 @@
 "use client";
+
 import ProductCard from "@/app/components/ProductCard";
 import { fetchProducts, searchProducts } from "@/app/redux/slices/productSlice";
+import { fetchCategories } from "@/app/redux/slices/categorySlice";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaPlus } from "react-icons/fa6";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { fetchCategories } from "@/app/redux/slices/categorySlice";
 import { useRouter } from "next/navigation";
+import type { AppDispatch, RootState } from "@/app/redux/store";
+
+interface Category {
+  id: string;
+  name: string;
+  slug?: string;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  images: string[];
+  slug: string;
+  category: Category;
+}
+
+interface Option {
+  value: string;
+  label: string;
+}
 
 const ProductsPage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { products, loading } = useSelector((state: any) => state.product);
-  const [searchedText, setSearchedText] = useState("");
 
+  const { products, loading } = useSelector(
+    (state: RootState) => state.product
+  );
+  const { categories } = useSelector((state: RootState) => state.categories);
+
+  const [searchedText, setSearchedText] = useState("");
   const [category, setCategory] = useState("all");
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
-  const { categories, loading: categoryLoading } = useSelector(
-    (state) => state.categories
-  );
-
+  // Fetch categories once
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const options = useMemo(() => {
+  // Dropdown options
+  const options: Option[] = useMemo(() => {
     if (!categories || categories.length === 0) {
       return [{ value: "all", label: "All Categories" }];
     }
-
     const dynamicOptions = categories.map((cat) => ({
       value: cat.slug || cat.name.toLowerCase(),
       label: cat.name,
     }));
-
     return [{ value: "all", label: "All Categories" }, ...dynamicOptions];
   }, [categories]);
 
+  // Fetch products & handle click outside
   useEffect(() => {
     dispatch(fetchProducts());
 
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
       }
-    }
+    };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dispatch]);
 
+  // Handle search with debounce
   useEffect(() => {
     if (searchedText === "") {
       dispatch(fetchProducts());
@@ -69,6 +94,7 @@ const ProductsPage = () => {
     return () => clearTimeout(delay);
   }, [dispatch, searchedText]);
 
+  // Filter products by category
   useEffect(() => {
     if (!products) return;
 
@@ -76,16 +102,16 @@ const ProductsPage = () => {
       setFilteredProducts(products);
     } else {
       const tempCategory = products.filter(
-        (p: any) => p.category.name.toLowerCase() === category.toLowerCase()
+        (p: Product) => p.category.name.toLowerCase() === category.toLowerCase()
       );
       setFilteredProducts(tempCategory);
     }
   }, [category, products]);
 
   // Pagination calculations
-  const totalPages = Math.ceil(filteredProducts?.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = filteredProducts?.slice(
+  const paginatedProducts = filteredProducts.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -107,17 +133,13 @@ const ProductsPage = () => {
             <h1 className="text-4xl font-bold">Products</h1>
             <p className="text-gray-500">Manage your product catalog</p>
           </div>
-          <div>
-            <button
-              onClick={() => {
-                router.push("/products/create");
-              }}
-              className="flex justify-between items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--text-white)] rounded-md hover:bg-[var(--green)] hover:text-white transition-all"
-            >
-              <FaPlus />
-              Add Product
-            </button>
-          </div>
+          <button
+            onClick={() => router.push("/products/create")}
+            className="flex justify-between items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--text-white)] rounded-md hover:bg-[var(--green)] hover:text-white transition-all"
+          >
+            <FaPlus />
+            Add Product
+          </button>
         </div>
 
         {/* Search & Category */}
@@ -141,9 +163,7 @@ const ProductsPage = () => {
               required
               placeholder="Search"
               className="pl-10 w-full border border-gray-300 rounded-md h-10 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
-              onChange={(e) => {
-                setSearchedText(e.target.value);
-              }}
+              onChange={(e) => setSearchedText(e.target.value)}
             />
           </div>
 
@@ -192,8 +212,8 @@ const ProductsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-2 mb-4">
-            {paginatedProducts?.map((product: any, index: number) => (
-              <ProductCard key={index} product={product} />
+            {paginatedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}
@@ -203,7 +223,6 @@ const ProductsPage = () => {
       {totalPages > 1 && (
         <div className="flex justify-center mt-6">
           <div className="join">
-            {/* Previous Button */}
             <button
               className="join-item btn shadow-none border-none"
               onClick={() => goToPage(currentPage - 1)}
@@ -211,13 +230,9 @@ const ProductsPage = () => {
             >
               «
             </button>
-
-            {/* Page Indicator */}
             <button className="join-item btn shadow-none">
               Page {currentPage} of {totalPages}
             </button>
-
-            {/* Next Button */}
             <button
               className="join-item btn shadow-none border-none"
               onClick={() => goToPage(currentPage + 1)}
