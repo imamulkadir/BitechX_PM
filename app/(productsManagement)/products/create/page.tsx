@@ -8,6 +8,7 @@ import { addProduct } from "@/app/redux/slices/productSlice";
 import { Slide, toast } from "react-toastify";
 import ProductForm from "@/app/components/ProductForm";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { FaArrowLeft } from "react-icons/fa";
 
 // --- 1. Define Essential Types ---
 
@@ -153,16 +154,26 @@ const CreatePage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <ProductForm
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        categories={categories}
-        categoryLoading={categoryLoading}
-        from="create"
-      />
-    </div>
+    <>
+      <div className="max-w-2xl mx-auto mt-6 px-4">
+        <button
+          onClick={() => router.push("/products")}
+          className="flex justify-between items-center gap-2 cursor-pointer text-[var(--green)] hover:text-[var(--brown)]"
+        >
+          <FaArrowLeft /> Back
+        </button>
+      </div>
+      <div className="max-w-2xl mx-auto mt-4 p-6 bg-white shadow-md rounded-lg">
+        <ProductForm
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          categories={categories}
+          categoryLoading={categoryLoading}
+          from="create"
+        />
+      </div>
+    </>
   );
 };
 

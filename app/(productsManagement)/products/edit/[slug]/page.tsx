@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Slide, toast } from "react-toastify";
 import { ThunkDispatch, AnyAction } from "@reduxjs/toolkit";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface Category {
   id: string;
@@ -164,22 +165,32 @@ const UpdatePage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      {formData.name || formData.description || formData.images.length ? (
-        <ProductForm
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          categories={categories}
-          categoryLoading={categoryLoading}
-          from="update"
-        />
-      ) : (
-        <div className="text-center py-10 text-gray-500">
-          Loading product...
-        </div>
-      )}
-    </div>
+    <>
+      <div className="max-w-2xl mx-auto mt-6 px-4">
+        <button
+          onClick={() => router.push("/products")}
+          className="flex justify-between items-center gap-2 cursor-pointer text-[var(--green)] hover:text-[var(--brown)]"
+        >
+          <FaArrowLeft /> Back
+        </button>
+      </div>
+      <div className="max-w-2xl mx-auto mt-4 p-6 bg-white shadow-md rounded-lg">
+        {formData.name || formData.description || formData.images.length ? (
+          <ProductForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            categories={categories}
+            categoryLoading={categoryLoading}
+            from="update"
+          />
+        ) : (
+          <div className="text-center py-10 text-gray-500">
+            Loading product...
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ const HomePage = () => {
       style={{ minHeight: "calc(100vh - 263px)" }}
     >
       {/* Hero Text with gradient accent */}
-      <h1 className="text-4xl sm:text-5xl font-bold text-[var(--primary)]">
+      <h1 className="text-4xl sm:text-5xl font-bold text-[var(--primary)] mt-8">
         Welcome to <span className="font-bold">BitechX</span>
       </h1>
 
