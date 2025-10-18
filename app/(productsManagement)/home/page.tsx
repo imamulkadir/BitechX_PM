@@ -39,7 +39,7 @@ const HomePage = () => {
       {/* Call to Action */}
       <a
         href="/products"
-        className="mt-4 inline-block bg-[var(--brown)] text-white font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300"
+        className="mt-4 inline-block bg-[var(--green)] text-[var(--text-white)] font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-xl hover:scale-105 transition-transform duration-300"
       >
         Get Started
       </a>

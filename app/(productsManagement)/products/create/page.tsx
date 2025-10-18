@@ -157,7 +157,7 @@ const CreatePage = () => {
     <div className="max-w-2xl mx-auto mt-6 px-4">
       <button
         onClick={() => router.push("/products")}
-        className="flex items-center gap-2 text-[var(--green)] hover:text-[var(--brown)]"
+        className="flex items-center gap-2 text-[var(--green)] hover:text-[var(--brown)] cursor-pointer"
       >
         <FaArrowLeft /> Back
       </button>
