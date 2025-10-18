@@ -25,31 +25,40 @@ const CategoryPage = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-      {categories.map((category) => (
-        <div
-          key={category.id}
-          className="relative w-full h-48 rounded-2xl overflow-hidden shadow-lg group"
-        >
-          {/* Category Image */}
-          <img
-            src={category.image || "/placeholder.jpg"}
-            alt={category.name}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-500"
-          />
+    <>
+      <h1 className="text-2xl font-bold text-center my-4 text-[var(--green)]">
+        Total Categories [
+        <span className="text-xl px-2 text-[var(--brown)]">
+          {categories.length}
+        </span>
+        ]
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+        {categories.map((category) => (
+          <div
+            key={category.id}
+            className="relative w-full h-48 rounded-2xl overflow-hidden shadow-lg group"
+          >
+            {/* Category Image */}
+            <img
+              src={category.image || "/placeholder.jpg"}
+              alt={category.name}
+              className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-500"
+            />
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-all duration-300"></div>
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-all duration-300"></div>
 
-          {/* Category Name (Centered) */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="text-white text-lg font-semibold text-center px-3 capitalize">
-              {category.name}
-            </h2>
+            {/* Category Name (Centered) */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <h2 className="text-white text-lg font-semibold text-center px-3 capitalize">
+                {category.name}
+              </h2>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 };
 

@@ -11,6 +11,13 @@ const Footer = () => {
           />
           <h2 className="font-bold text-lg">BiTechX LLC</h2>
           <p className="text-sm text-[var(--text-white)]/70">
+            <a
+              className="text-[var(--green)] hover:text-[var(--brown)] transition-colors font-semibold"
+              href="https://www.linkedin.com/in/imamulkadir/"
+              target="_blank"
+            >
+              Imamul Kadir
+            </a>{" "}
             &copy; {new Date().getFullYear()} BiTechX LLC. All rights reserved.
           </p>
         </div>
@@ -28,6 +35,12 @@ const Footer = () => {
             className="hover:text-[var(--brown)] transition-colors"
           >
             Products
+          </a>
+          <a
+            href="/categories"
+            className="hover:text-[var(--brown)] transition-colors"
+          >
+            Categories
           </a>
         </div>
       </div>
