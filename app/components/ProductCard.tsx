@@ -26,33 +26,7 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  // const router = useRouter();
   const [openModal, setOpenModal] = useState(false); // boolean instead of slug
-  // const dispatch = useDispatch();
-
-  // const handleDelete = (id) => {
-  //   Swal.fire({
-  //     title: "Are you sure?",
-  //     text: "You won't be able to revert this!",
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonColor: "#3085d6",
-  //     cancelButtonColor: "#d33",
-  //     confirmButtonText: "Yes, delete it!",
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       // @ts-expect-error hmm
-  //       dispatch(deleteSingleProduct(id))
-  //         .unwrap()
-  //         .then(() => {
-  //           Swal.fire("Deleted!", "Your product has been deleted.", "success");
-  //         })
-  //         .catch(() => {
-  //           Swal.fire("Error!", "Failed to delete product.", "error");
-  //         });
-  //     }
-  //   });
-  // };
 
   return (
     <div className="card bg-[var(--text-white)] w-full shadow-sm text-[var(--text-white)] transition-all rounded-md overflow-hidden">
@@ -69,13 +43,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="card-body bg-[var(--primary)] p-3 sm:p-4 md:p-5 sm:space-y-2">
         <div className="flex justify-between">
           <h2 className="text-lg sm:text-xl font-semibold tracking-wide line-clamp-1">
-            {product.name}
+            {product.name.charAt(0).toUpperCase() + product.name.slice(1)}
           </h2>
           <div
-            className="badge px-3 text-white -mt-12 lg:-mt-0 truncate overflow-hidden whitespace-nowrap"
+            className="badge px-3 text-white -mt-12 lg:-mt-0 whitespace-nowrap"
             style={{
               backgroundColor: "#4E6E5D",
-              maxWidth: "clamp(6rem, 25vw, 12rem)", // min 6rem, 25% of viewport, max 12rem
+              width: "fit-content",
+              maxWidth: "100%",
             }}
             title={product.category.name}
           >
