@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import { useRouter } from "next/navigation";
-import { Bounce, toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const Navbar = () => {
       draggable: true,
       progress: undefined,
       theme: "dark",
-      transition: Bounce,
+      transition: Slide,
     });
   };
 

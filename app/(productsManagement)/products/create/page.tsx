@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/app/redux/slices/categorySlice";
 import { useRouter } from "next/navigation";
 import { addProduct } from "@/app/redux/slices/productSlice";
-import { Bounce, toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 import ProductForm from "@/app/components/ProductForm";
 
 const CreatePage = () => {
@@ -79,7 +79,7 @@ const CreatePage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
         router.push("/products/create");
       }
@@ -93,7 +93,7 @@ const CreatePage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
         router.push("/products");
       }

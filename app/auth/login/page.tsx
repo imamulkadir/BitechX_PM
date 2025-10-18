@@ -4,7 +4,7 @@ import { login } from "@/app/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Bounce, toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const LoginPage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
       }
       if (data.payload.token) {
@@ -52,7 +52,7 @@ const LoginPage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
       }
     });

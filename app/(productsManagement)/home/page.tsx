@@ -5,12 +5,12 @@ const HomePage = () => {
       style={{ minHeight: "calc(100vh - 263px)" }}
     >
       {/* Hero Text with gradient accent */}
-      <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--brown)] bg-clip-text text-transparent">
-        Welcome to BitechX
+      <h1 className="text-4xl sm:text-5xl font-bold text-[var(--primary)]">
+        Welcome to <span className="font-bold">BitechX</span>
       </h1>
 
       {/* Subtitle */}
-      <p className="text-2xl sm:text-3xl text-[var(--text-muted)] font-semibold animate-fadeIn">
+      <p className="text-xl sm:text-xl text-[var(--text-muted)] font-semibold animate-fadeIn italic">
         Product Management System
       </p>
 

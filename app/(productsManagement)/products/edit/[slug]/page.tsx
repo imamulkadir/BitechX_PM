@@ -9,7 +9,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Bounce, toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 
 const UpdatePage = () => {
   const { slug } = useParams();
@@ -102,7 +102,7 @@ const UpdatePage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
       }
       if (data.payload) {
@@ -115,7 +115,7 @@ const UpdatePage = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          transition: Bounce,
+          transition: Slide,
         });
         router.push("/products");
       }
