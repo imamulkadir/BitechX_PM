@@ -71,7 +71,7 @@ const ProductCard = ({ product }) => {
           ${product.price}
         </p>
 
-        <div className="card-actions flex justify-between mt gap-2 sm:gap-2">
+        {/* <div className="card-actions flex justify-between mt gap-2 sm:gap-2">
           <button
             onClick={() => router.push(`/products/edit/${product.slug}`)}
             className="flex-1 py-2 border border-[var(--border)] text-[var(--text-white)] flex items-center justify-center gap-2 rounded-md hover:bg-[var(--green)] hover:text-white transition-all"
@@ -86,7 +86,7 @@ const ProductCard = ({ product }) => {
             <FaTrashAlt size={16} />
             Delete
           </button>
-        </div>
+        </div> */}
       </div>
       {openModal && (
         <ProductDetailsModal
