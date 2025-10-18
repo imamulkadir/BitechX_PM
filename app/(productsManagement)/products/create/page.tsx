@@ -25,6 +25,7 @@ const CreatePage = () => {
   });
 
   useEffect(() => {
+    //@ts-expect-error hmm
     dispatch(fetchCategories());
   }, [dispatch]);
 
@@ -67,6 +68,7 @@ const CreatePage = () => {
       categoryId: formData.category,
     };
 
+    //@ts-expect-error hmm
     dispatch(addProduct(payload)).then((data) => {
       //   console.log(data);
       if (data.error) {

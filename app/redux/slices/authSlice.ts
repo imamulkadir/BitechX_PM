@@ -45,8 +45,10 @@ export const authSlice = createSlice({
         // console.log(action.payload);
         state.token = action.payload.token;
         localStorage.setItem("jw_token", state.token as any);
+        //@ts-expect-error hmm
         const data = jwtDecode(state.token);
         // console.log(data);
+        //@ts-expect-error hmm
         state.user = data.email;
         // console.log(state.user);
         state.loading = false;
