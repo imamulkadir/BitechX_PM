@@ -154,16 +154,15 @@ const CreatePage = () => {
   };
 
   return (
-    <>
-      <div className="max-w-2xl mx-auto mt-6 px-4">
-        <button
-          onClick={() => router.push("/products")}
-          className="flex justify-between items-center gap-2 cursor-pointer text-[var(--green)] hover:text-[var(--brown)]"
-        >
-          <FaArrowLeft /> Back
-        </button>
-      </div>
-      <div className="max-w-2xl mx-auto mt-4 p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-2xl mx-auto mt-6 px-4">
+      <button
+        onClick={() => router.push("/products")}
+        className="flex items-center gap-2 text-[var(--green)] hover:text-[var(--brown)]"
+      >
+        <FaArrowLeft /> Back
+      </button>
+
+      <div className="mt-4 p-6 bg-white shadow-md rounded-lg">
         <ProductForm
           formData={formData}
           handleChange={handleChange}
@@ -173,7 +172,7 @@ const CreatePage = () => {
           from="create"
         />
       </div>
-    </>
+    </div>
   );
 };
 

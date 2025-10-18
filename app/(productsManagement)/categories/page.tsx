@@ -61,7 +61,7 @@ const CategoryPage = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-center my-4 text-[var(--green)]">
+      <h1 className="text-2xl font-bold text-center mt-6 text-[var(--green)]">
         Total Categories [
         <span className="text-xl px-2 text-[var(--brown)]">
           {categories.length}
