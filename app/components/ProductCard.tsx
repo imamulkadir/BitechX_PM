@@ -34,9 +34,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <figure className="w-full h-48 sm:h-52 md:h-60 overflow-hidden cursor-pointer">
         <img
           onClick={() => setOpenModal(true)}
-          src={product?.images?.[0]}
-          alt={product.name}
+          src={product?.images?.[0] || "https://placehold.co/600x400"}
+          alt={product.name || "Placeholder image"}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = "https://placehold.co/600x400";
+          }}
         />
       </figure>
       {/* Body */}
