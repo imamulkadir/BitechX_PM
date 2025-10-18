@@ -1,7 +1,7 @@
 const HomePage = () => {
   return (
     <div
-      className="max-w-7xl mx-auto flex flex-col justify-center items-center px-4 text-center space-y-6 font-open"
+      className="max-w-7xl mx-auto flex flex-col justify-center items-center px-4 text-center space-y-6 font-coolvetica"
       style={{ minHeight: "calc(100vh - 263px)" }}
     >
       {/* Hero Text with gradient accent */}

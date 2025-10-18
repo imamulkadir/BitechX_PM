@@ -13,6 +13,11 @@
   --border: #eff1f3;
 }
 
+body {
+  font-family: var(--font-coolvetica), sans-serif;
+  letter-spacing: 0.08em;
+}
+
 .font-open {
   font-family: "Open Sans", sans-serif;
   font-optical-sizing: auto;
