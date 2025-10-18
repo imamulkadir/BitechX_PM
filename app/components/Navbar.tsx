@@ -46,6 +46,9 @@ const Navbar = () => {
       <div className="hidden md:flex flex-none">
         <ul className="menu menu-horizontal px-1 gap-2">
           <li>
+            <a onClick={() => router.push("/home")}>Home</a>
+          </li>
+          <li>
             <a onClick={() => router.push("/products")}>Products</a>
           </li>
           <li>
@@ -86,6 +89,9 @@ const Navbar = () => {
             tabIndex={0}
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-[var(--primary)] w-52 gap-2 rounded-b-lg"
           >
+            <li>
+              <a onClick={() => router.push("/home")}>Home</a>
+            </li>
             <li>
               <a onClick={() => router.push("/products")}>Products</a>
             </li>

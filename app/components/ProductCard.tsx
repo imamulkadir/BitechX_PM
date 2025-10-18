@@ -37,7 +37,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card bg-[var(--text-white)] w-full shadow-sm text-[var(--text-white)] rounded-md overflow-hidden">
+    <div className="card bg-[var(--text-white)] w-full text-[var(--text-white)] rounded-md overflow-hidden shadow-sm transform transition-all duration-300 hover:scale-101 hover:shadow-lg">
       {/* Image */}
       <figure className="w-full h-48 sm:h-52 md:h-60 overflow-hidden cursor-pointer">
         <img
@@ -55,8 +55,12 @@ const ProductCard = ({ product }) => {
             {product.name}
           </h2>
           <div
-            className="badge px-2 text-white"
-            style={{ backgroundColor: "#4E6E5D" }}
+            className="badge px-3 text-white -mt-12 lg:-mt-0 truncate overflow-hidden whitespace-nowrap"
+            style={{
+              backgroundColor: "#4E6E5D",
+              maxWidth: "clamp(6rem, 25vw, 12rem)", // min 6rem, 25% of viewport, max 12rem
+            }}
+            title={product.category.name}
           >
             {product.category.name}
           </div>

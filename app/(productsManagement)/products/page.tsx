@@ -201,36 +201,31 @@ const ProductsPage = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center items-center gap-1 mt-6">
-          <button
-            className="px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <div className="flex justify-center mt-6">
+          <div className="join">
+            {/* Previous Button */}
             <button
-              key={page}
-              className={`px-2 py-1 border rounded-md text-xs sm:text-sm ${
-                page === currentPage
-                  ? "bg-[var(--brown)] text-white"
-                  : "hover:bg-gray-200"
-              }`}
-              onClick={() => goToPage(page)}
+              className="join-item btn shadow-none border-none"
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
             >
-              {page}
+              «
             </button>
-          ))}
 
-          <button
-            className="px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-200 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+            {/* Page Indicator */}
+            <button className="join-item btn shadow-none">
+              Page {currentPage} of {totalPages}
+            </button>
+
+            {/* Next Button */}
+            <button
+              className="join-item btn shadow-none border-none"
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              »
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 type ProductFormProps = {
   formData: {
     name: string;
@@ -15,6 +18,7 @@ type ProductFormProps = {
   handleSubmit: (e: React.FormEvent) => void;
   categories: { id: string; name: string; slug?: string }[];
   categoryLoading: boolean;
+  from: "create" | "update";
 };
 
 const ProductForm = ({
@@ -25,25 +29,84 @@ const ProductForm = ({
   categoryLoading,
   from,
 }: ProductFormProps) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (name: string, value: string) => {
+    let message = "";
+    switch (name) {
+      case "name":
+        if (!value.trim()) message = "Product name is required.";
+        break;
+      case "description":
+        if (!value.trim()) message = "Description cannot be empty.";
+        break;
+      case "price":
+        if (!value || parseFloat(value) <= 0)
+          message = "Enter a valid price greater than 0.";
+        break;
+      case "category":
+        if (!value) message = "Please select a category.";
+        break;
+      default:
+        break;
+    }
+    setErrors((prev) => ({ ...prev, [name]: message }));
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    handleChange(e);
+    validateField(name, value);
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: Record<string, string> = {};
+    ["name", "description", "price", "category"].forEach((field) => {
+      const value = (formData as any)[field];
+      validateField(field, value);
+      if (!value || (field === "price" && parseFloat(value) <= 0)) {
+        newErrors[field] = `${
+          field[0].toUpperCase() + field.slice(1)
+        } is required.`;
+      }
+    });
+
+    if (Object.values(newErrors).some((err) => err)) {
+      setErrors(newErrors);
+      return;
+    }
+
+    handleSubmit(e);
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6 text-center text-[var(--brown)]">
         {from === "create" ? "Add Product" : "Update Product"}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={onSubmit} className="space-y-5">
         {/* Name */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">Name</label>
           <input
             type="text"
             name="name"
-            required
             value={formData.name}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
+            onChange={handleInputChange}
+            className={`w-full border ${
+              errors.name ? "border-red-500" : "border-gray-300"
+            } rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none`}
             placeholder="Enter product name"
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+          )}
         </div>
 
         {/* Description */}
@@ -53,16 +116,20 @@ const ProductForm = ({
           </label>
           <textarea
             name="description"
-            required
             rows={4}
             value={formData.description}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
+            onChange={handleInputChange}
+            className={`w-full border ${
+              errors.description ? "border-red-500" : "border-gray-300"
+            } rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none`}
             placeholder="Enter product description"
           ></textarea>
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+          )}
         </div>
 
-        {/* Images (comma-separated URLs) */}
+        {/* Images */}
         <div>
           <label className="block text-gray-700 font-medium mb-1">
             Images (comma-separated URLs)
@@ -71,7 +138,7 @@ const ProductForm = ({
             type="text"
             name="imageInput"
             value={formData.imageInput}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
             placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
           />
@@ -95,14 +162,18 @@ const ProductForm = ({
           <input
             type="number"
             name="price"
-            required
             min="0"
             step="0.01"
             value={formData.price}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
+            onChange={handleInputChange}
+            className={`w-full border ${
+              errors.price ? "border-red-500" : "border-gray-300"
+            } rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none`}
             placeholder="Enter price (e.g. 25.99)"
           />
+          {errors.price && (
+            <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+          )}
         </div>
 
         {/* Category */}
@@ -112,22 +183,26 @@ const ProductForm = ({
           </label>
           <select
             name="category"
-            required
             value={formData.category}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none"
+            onChange={handleInputChange}
+            className={`w-full border ${
+              errors.category ? "border-red-500" : "border-gray-300"
+            } rounded-md px-3 py-2 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none`}
           >
             <option value="">Select a category</option>
             {categoryLoading ? (
               <option disabled>Loading...</option>
             ) : (
-              categories?.map((cat: any) => (
+              categories?.map((cat) => (
                 <option key={cat.id} value={cat.slug || cat.id}>
                   {cat.name}
                 </option>
               ))
             )}
           </select>
+          {errors.category && (
+            <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+          )}
         </div>
 
         {/* Submit */}
