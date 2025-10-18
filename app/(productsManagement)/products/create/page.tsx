@@ -122,7 +122,7 @@ const CreatePage = () => {
       if (res.meta.requestStatus === "rejected") {
         toast.error("Failed to add product!", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -139,7 +139,7 @@ const CreatePage = () => {
       if (res.meta.requestStatus === "fulfilled" && res.payload) {
         toast.success("Product added!", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,

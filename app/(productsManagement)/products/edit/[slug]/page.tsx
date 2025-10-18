@@ -137,7 +137,7 @@ const UpdatePage = () => {
       if (res.meta.requestStatus === "rejected") {
         toast.error("Failed to update product!", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -150,7 +150,7 @@ const UpdatePage = () => {
       if (res.meta.requestStatus === "fulfilled") {
         toast.success("Product updated!", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,

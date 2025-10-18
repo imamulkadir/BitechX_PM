@@ -14,7 +14,7 @@ const Navbar = () => {
     router.push("/");
     toast.info("Logged out!", {
       position: "top-right",
-      autoClose: 5000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: false,
       pauseOnHover: true,
