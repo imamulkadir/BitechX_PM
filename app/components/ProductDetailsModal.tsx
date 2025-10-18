@@ -11,7 +11,7 @@ const ProductDetailsModal = ({ product, onClose }) => {
         <img
           src={product.images?.[0]}
           alt={product.name}
-          className="w-full h-64 object-cover rounded my-4"
+          className="w-full h-64 object-cover rounded mt-4"
         />
         <h3 className="font-bold text-lg">{product.name}</h3>
         <div className="flex justify-between items-center">

@@ -37,7 +37,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="card bg-[var(--text-white)] w-full text-[var(--text-white)] rounded-md overflow-hidden shadow-sm transform transition-all duration-300 hover:scale-101 hover:shadow-lg">
+    <div className="card bg-[var(--text-white)] w-full shadow-sm text-[var(--text-white)] transition-all rounded-md overflow-hidden">
       {/* Image */}
       <figure className="w-full h-48 sm:h-52 md:h-60 overflow-hidden cursor-pointer">
         <img
@@ -47,7 +47,6 @@ const ProductCard = ({ product }) => {
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
       </figure>
-
       {/* Body */}
       <div className="card-body bg-[var(--primary)] p-3 sm:p-4 md:p-5 sm:space-y-2">
         <div className="flex justify-between">
@@ -89,7 +88,6 @@ const ProductCard = ({ product }) => {
           </button>
         </div>
       </div>
-
       {openModal && (
         <ProductDetailsModal
           product={product}
