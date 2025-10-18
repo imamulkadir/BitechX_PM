@@ -234,7 +234,7 @@ const ProductsPage = () => {
             >
               «
             </button>
-            <button className="join-item btn shadow-none">
+            <button className="join-item btn shadow-none border-none">
               Page {currentPage} of {totalPages}
             </button>
             <button
