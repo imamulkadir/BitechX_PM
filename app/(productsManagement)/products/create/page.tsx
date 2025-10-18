@@ -1,31 +1,78 @@
 "use client";
 import { useEffect, useState } from "react";
+// Import standard hooks
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/app/redux/slices/categorySlice";
 import { useRouter } from "next/navigation";
 import { addProduct } from "@/app/redux/slices/productSlice";
 import { Slide, toast } from "react-toastify";
 import ProductForm from "@/app/components/ProductForm";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+
+// --- 1. Define Essential Types ---
+
+// Define the shape of the Category object
+interface Category {
+  id: string;
+  name: string;
+  // Add other category fields if needed
+}
+
+// Define the shape of the Product Form state
+interface ProductFormState {
+  name: string;
+  description: string;
+  images: string[];
+  price: string;
+  category: string; // ID of the selected category
+  imageInput: string;
+}
+
+// Define the shape of the payload for addProduct thunk
+interface AddProductPayload {
+  name: string;
+  description: string;
+  images: string[];
+  price: string;
+  categoryId: string;
+}
+
+// Define the shape of the Redux state needed by this component
+interface RootStateSubset {
+  categories: {
+    categories: Category[];
+    loading: boolean;
+  };
+  // Add other slice states (e.g., products) if needed here
+}
+
+// Define a type for the dispatch function to correctly handle thunks
+type AppDispatch = ThunkDispatch<RootStateSubset, unknown, AnyAction>;
+
+// --- 2. Component Implementation ---
 
 const CreatePage = () => {
-  const dispatch = useDispatch();
+  // Use the typed dispatch type
+  const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
 
+  // FIX: Explicitly type the state in useSelector using RootStateSubset
   const { categories, loading: categoryLoading } = useSelector(
-    (state: any) => state.categories
+    (state: RootStateSubset) => state.categories
   );
 
-  const [formData, setFormData] = useState({
+  // FIX: Type the useState hook
+  const [formData, setFormData] = useState<ProductFormState>({
     name: "",
     description: "",
-    images: [] as string[],
+    images: [],
     price: "",
     category: "",
-    imageInput: "", // temp string input for comma-separated URLs
+    imageInput: "",
   });
 
   useEffect(() => {
-    //@ts-expect-error hmm
+    // FIX: Dispatch directly. The AppDispatch type handles the thunk return type.
     dispatch(fetchCategories());
   }, [dispatch]);
 
@@ -36,7 +83,6 @@ const CreatePage = () => {
   ) => {
     const { name, value } = e.target;
 
-    // If editing imageInput, also update images array
     if (name === "imageInput") {
       const urls = value
         .split(",")
@@ -51,7 +97,7 @@ const CreatePage = () => {
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name as keyof ProductFormState]: value, // Type assertion for computed property
       }));
     }
   };
@@ -59,8 +105,8 @@ const CreatePage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prepare payload
-    const payload = {
+    // FIX: Type the payload
+    const payload: AddProductPayload = {
       name: formData.name,
       description: formData.description,
       images: formData.images,
@@ -68,10 +114,11 @@ const CreatePage = () => {
       categoryId: formData.category,
     };
 
-    //@ts-expect-error hmm
-    dispatch(addProduct(payload)).then((data) => {
-      //   console.log(data);
-      if (data.error) {
+    // FIX: Dispatch directly and type the result of the .then() promise as AnyAction
+    // @ts-expect-error hmm
+    dispatch(addProduct(payload)).then((res: AnyAction) => {
+      // Check for rejected (error) status
+      if (res.meta.requestStatus === "rejected") {
         toast.error("Failed to add product!", {
           position: "top-right",
           autoClose: 5000,
@@ -83,9 +130,12 @@ const CreatePage = () => {
           theme: "dark",
           transition: Slide,
         });
+        // Consider removing this line if you want to stay on the create page after error:
         router.push("/products/create");
       }
-      if (data.payload) {
+
+      // Check for fulfilled (success) status and payload existence
+      if (res.meta.requestStatus === "fulfilled" && res.payload) {
         toast.success("Product added!", {
           position: "top-right",
           autoClose: 5000,
@@ -100,11 +150,6 @@ const CreatePage = () => {
         router.push("/products");
       }
     });
-
-    // console.log("Payload:", payload);
-
-    // TODO: Replace with API POST request
-    //
   };
 
   return (

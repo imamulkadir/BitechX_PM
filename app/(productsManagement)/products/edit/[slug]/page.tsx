@@ -10,19 +10,62 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Slide, toast } from "react-toastify";
+import { ThunkDispatch, AnyAction } from "@reduxjs/toolkit";
+
+interface Category {
+  id: string;
+  name: string;
+}
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  images: string[];
+  price: string;
+  categoryId: string;
+}
+interface RootState {
+  categories: { categories: Category[]; loading: boolean };
+}
+type FetchProductResult = Product;
+
+const fetchCategoriesThunk = fetchCategories;
+const fetchSingleProductThunk = fetchSingleProduct;
+const updateProductThunk = updateProduct;
+
+type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>;
+
+interface ProductFormState {
+  name: string;
+  description: string;
+  images: string[];
+  price: string;
+  category: string;
+  imageInput: string;
+}
+
+interface UpdatePayload {
+  id: string;
+  name: string;
+  description: string;
+  images: string[];
+  price: string;
+  categoryId: string;
+}
 
 const UpdatePage = () => {
-  const { slug } = useParams();
-  const dispatch = useDispatch();
+  const params = useParams<{ slug: string }>();
+  const { slug } = params;
+
+  const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const [productId, setProductId] = useState("");
-  //   console.log(slug);
 
   const { categories, loading: categoryLoading } = useSelector(
-    (state: any) => state.categories
+    (state: RootState) => state.categories
   );
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormState>({
     name: "",
     description: "",
     images: [] as string[],
@@ -31,16 +74,14 @@ const UpdatePage = () => {
     imageInput: "",
   });
 
-  // Fetch product details on mount
   useEffect(() => {
-    //@ts-expect-error hmm
-    dispatch(fetchCategories());
-    //@ts-expect-error hmm
-    dispatch(fetchSingleProduct(slug)).then((res: any) => {
-      if (res.payload) {
-        const product = res.payload;
+    dispatch(fetchCategoriesThunk());
+
+    dispatch(fetchSingleProductThunk(slug)).then((res: AnyAction) => {
+      if (res.meta.requestStatus === "fulfilled" && res.payload) {
+        const product: FetchProductResult = res.payload;
         setProductId(product.id);
-        console.log(product);
+
         setFormData({
           name: product.name,
           description: product.description,
@@ -52,8 +93,6 @@ const UpdatePage = () => {
       }
     });
   }, [dispatch, slug]);
-
-  //   console.log(formData);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -84,7 +123,7 @@ const UpdatePage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
+    const payload: UpdatePayload = {
       id: productId,
       name: formData.name,
       description: formData.description,
@@ -92,10 +131,9 @@ const UpdatePage = () => {
       price: formData.price,
       categoryId: formData.category,
     };
-
-    //@ts-expect-error hmm
-    dispatch(updateProduct(payload)).then((data: any) => {
-      if (data.error) {
+    // @ts-expect-error hmm
+    dispatch(updateProductThunk(payload)).then((res: AnyAction) => {
+      if (res.meta.requestStatus === "rejected") {
         toast.error("Failed to update product!", {
           position: "top-right",
           autoClose: 5000,
@@ -108,7 +146,7 @@ const UpdatePage = () => {
           transition: Slide,
         });
       }
-      if (data.payload) {
+      if (res.meta.requestStatus === "fulfilled") {
         toast.success("Product updated!", {
           position: "top-right",
           autoClose: 5000,
