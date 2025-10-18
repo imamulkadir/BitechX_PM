@@ -1,101 +1,172 @@
 import axiosInstance from "@/app/lib/axiosInstance";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const fetchProducts = createAsyncThunk(
-  "product/fetchProducts",
-  async () => {
-    try {
-      const response = await axiosInstance.get("/products");
-      // console.log(response.data);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
-);
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  images?: string[];
+  category?: { name: string };
+}
 
-export const addProduct = createAsyncThunk("products/create", async (data) => {
+interface ProductState {
+  products: Product[] | null;
+  product: Product | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: ProductState = {
+  products: null,
+  product: null,
+  loading: false,
+  error: null,
+};
+
+// -------------------- Thunks --------------------
+
+// Fetch all products
+import axios from "axios";
+
+export const fetchProducts = createAsyncThunk<
+  Product[],
+  void,
+  { rejectValue: string }
+>("product/fetchProducts", async (_, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.post("/products", data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    // console.log(response.data);
+    const response = await axiosInstance.get("/products");
     return response.data;
-  } catch (error) {
-    throw error;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("Failed to fetch products");
   }
 });
 
-export const searchProducts = createAsyncThunk(
-  "product/searchProducts",
-  async (seachValue) => {
-    try {
-      const response = await axiosInstance.get("/products/search", {
-        params: { searchedText: seachValue },
-      });
-      // console.log(response.data);
-      return response.data;
-    } catch (error) {
-      throw error;
+// Search products
+export const searchProducts = createAsyncThunk<
+  Product[],
+  string,
+  { rejectValue: string }
+>("product/searchProducts", async (searchValue, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get("/products/search", {
+      params: { searchedText: searchValue },
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
     }
-  }
-);
-
-export const fetchSingleProduct = createAsyncThunk(
-  "/products/details",
-  async (slug) => {
-    try {
-      // console.log(slug);
-      const response = await axiosInstance.get(`/products/${slug}`);
-      // console.log(response.data);
-      return response.data;
-    } catch (error) {
-      throw error;
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
     }
+    return rejectWithValue("Failed to search products");
   }
-);
+});
 
-export const deleteSingleProduct = createAsyncThunk(
-  "/products/delete",
-  async (id) => {
-    try {
-      // console.log(id);
-      const response = await axiosInstance.delete(`/products/${id}`);
-      // console.log("from slice: ", response.data);
-      return response.data;
-    } catch (error) {
-      throw error;
+// Add product
+export const addProduct = createAsyncThunk<
+  Product,
+  Partial<Product>,
+  { rejectValue: string }
+>("products/create", async (data, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post("/products", data, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
     }
-  }
-);
-
-export const updateProduct = createAsyncThunk(
-  "/products/update",
-  async (data) => {
-    try {
-      const response = await axiosInstance.put(`/products/${data.id}`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      // console.log(response.data);
-      return response.data;
-    } catch (error) {
-      throw error;
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
     }
+    return rejectWithValue("Failed to add product");
   }
-);
+});
 
+// Fetch single product
+export const fetchSingleProduct = createAsyncThunk<
+  Product,
+  string,
+  { rejectValue: string }
+>("products/fetchSingle", async (slug, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get(`/products/${slug}`);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("Failed to fetch product details");
+  }
+});
+
+// Delete product
+export const deleteSingleProduct = createAsyncThunk<
+  string, // returned value: deleted product ID
+  string, // argument: product ID
+  { rejectValue: string }
+>("products/delete", async (id, { rejectWithValue }) => {
+  try {
+    await axiosInstance.delete(`/products/${id}`);
+    return id; // return deleted product ID
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("Failed to delete product");
+  }
+});
+
+// Update product
+export interface UpdateProductPayload {
+  id: string;
+  name?: string;
+  price?: number;
+  description?: string;
+  images?: string[];
+  category?: { name: string };
+}
+
+export const updateProduct = createAsyncThunk<
+  Product,
+  UpdateProductPayload,
+  { rejectValue: string }
+>("products/update", async (data, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.put(`/products/${data.id}`, data, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("Failed to update product");
+  }
+});
+
+// -------------------- Slice --------------------
 export const productSlice = createSlice({
   name: "product",
-  initialState: {
-    products: null,
-    product: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     resetState: (state) => {
       state.products = null;
@@ -106,87 +177,119 @@ export const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fetch Products
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.products = action.payload;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        fetchProducts.fulfilled,
+        (state, action: PayloadAction<Product[]>) => {
+          state.products = action.payload;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       })
+
+      // Search Products
       .addCase(searchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchProducts.fulfilled, (state, action) => {
-        state.products = action.payload;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        searchProducts.fulfilled,
+        (state, action: PayloadAction<Product[]>) => {
+          state.products = action.payload;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(searchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       })
+
+      // Add Product
       .addCase(addProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addProduct.fulfilled, (state, action) => {
-        state.product = action.payload;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        addProduct.fulfilled,
+        (state, action: PayloadAction<Product>) => {
+          state.product = action.payload;
+          state.products = state.products
+            ? [action.payload, ...state.products]
+            : [action.payload];
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(addProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       })
+
+      // Fetch Single Product
       .addCase(fetchSingleProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchSingleProduct.fulfilled, (state, action) => {
-        state.product = action.payload;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        fetchSingleProduct.fulfilled,
+        (state, action: PayloadAction<Product>) => {
+          state.product = action.payload;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(fetchSingleProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       })
+
+      // Delete Product
       .addCase(deleteSingleProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteSingleProduct.fulfilled, (state, action) => {
-        state.products = state.products?.filter(
-          (p) => p.id !== action.meta.arg
-        );
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        deleteSingleProduct.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.products =
+            state.products?.filter((p) => p.id !== action.payload) ?? null;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(deleteSingleProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       })
+
+      // Update Product
       .addCase(updateProduct.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateProduct.fulfilled, (state, action) => {
-        state.products = state.products?.filter(
-          (p) => p.id !== action.meta.arg
-        );
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        updateProduct.fulfilled,
+        (state, action: PayloadAction<Product>) => {
+          state.products =
+            state.products?.map((p) =>
+              p.id === action.payload.id ? action.payload : p
+            ) ?? null;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as any;
+        state.error = action.payload ?? "Unknown error";
       });
   },
 });
